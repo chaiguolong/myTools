@@ -1,9 +1,9 @@
 let s:save_cpo = &cpo
 set cpo&vim
-if exists('g:JavaUnit_autoloaded')
+if exists('g:myTools_autoloaded')
     finish
 endif
-let g:javaunit_util_loaded = 1
+let g:myTools_util_loaded = 1
 
 
 function! s:OSX()
@@ -16,7 +16,7 @@ function! s:WINDOWS()
     return (has('win16') || has('win32') || has('win64'))
 endfunction
 
-function! javaunit#util#Fsep() abort
+function! mytools#util#Fsep() abort
     if s:WINDOWS()
         return '\'
     else
@@ -24,7 +24,7 @@ function! javaunit#util#Fsep() abort
     endif
 endfunction
 
-function! javaunit#util#Psep() abort
+function! mytools#util#Psep() abort
     if s:WINDOWS()
         return ';'
     else
@@ -32,11 +32,11 @@ function! javaunit#util#Psep() abort
     endif
 endfunction
 
-function! javaunit#util#ExecCMD(cmd)
+function! mytools#util#ExecCMD(cmd)
     if exists(':Unite')
         call unite#start([['output/shellcmd', s:EscapeCMD(a:cmd)]], {'log': 1, 'wrap': 1,'start_insert':0})
     else
-        call javaunit#win#OpenWin(a:cmd)
+        call mytools#win#OpenWin(a:cmd)
     endif
 endfunction
 

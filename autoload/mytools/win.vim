@@ -1,8 +1,8 @@
 let s:save_cpo = &cpo
 set cpo&vim
-let s:name = '__JavaUnit__'
+let s:name = '__myTools__'
 
-fu! javaunit#win#OpenWin(cmd)
+fu! myTools#win#OpenWin(cmd)
     if bufwinnr('s:name') < 0
         if bufnr('s:name') != -1
             exe 'silent! split ' . '+b' . bufnr('s:name')
