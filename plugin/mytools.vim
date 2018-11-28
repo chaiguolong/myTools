@@ -32,12 +32,22 @@ command! -nargs=? -complete=file
             \ call mytools#NewTestClass(expand("%:t:r"))
 
 command! -nargs=0
+            \ MyToolsServerCompile
+            \ call mytools#Compile()
+
+
+command! -nargs=0
             \ MyToolsServerCompilePro
-            \ call mytools#CompilePro()
+            \ call mytools#CompilePro1()
+
+
 
 command! -nargs=0
             \ JUGenerateM
             \ call mytools#GenerateTestMethods()
+
+
+
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

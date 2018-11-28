@@ -1,7 +1,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-if exists('myTools_loaded')
+if exists('g:myTools_autoload')
     finish
 endif
 let g:myTools_autoload = 1
@@ -17,6 +17,73 @@ else
     let s:myTools_tempdir = g:myTools_Home .s:Fsep .'bin'
 endif
 
+
+"--------------------------------------自定义上-------------------------------------------------
+"编译java
+"功能一:编译功能
+function! mytools#CompilePro1() abort
+"增加自定义的主目录src文件夹
+let s:myTools_Home1 = split(fnamemodify(expand('%'), ':p:gs?\\?'. s:Fsep. '?'),"src")[0] 
+"增加自定义的存放classes目录,按照build/classes目录,因为web项目就是这个目录,如果有变动可以手动更改
+let s:myTools_tempdir1 = s:myTools_Home1 .'build/classes/'
+let s:myTools_tempdir2 = s:myTools_Home1 .'WebContent/WEB-INF/lib'
+
+"增加源文件的目录
+let s:myTools_TestMethod_Source1 = fnamemodify(expand('%'), ':p:h:gs?\\?'. s:Fsep. '?')
+"定义拷贝servlet.jar和jsp.jar的命令的变量
+let s:jsp_command = 'cp /Users/mymac/Library/apache-tomcat-7.0.90/lib/jsp-api.jar '.s:myTools_tempdir2
+let s:servlet_command = '&&cp /Users/mymac/Library/apache-tomcat-7.0.90/lib/servlet-api.jar '.s:myTools_tempdir2
+"将tomcat的jar包加入到classpath
+" let s:tomcat_lib = '/Users/mymac/Library/apache-tomcat-7.0.90/lib'
+	"如果目录存在运行编译脚本,如果不存在则新建文件夹build/classes
+	if isdirectory(s:myTools_tempdir1)
+		" let cmd='javac -encoding utf8 -d '.s:myTools_tempdir.' '.s:myTools_TestMethod_Source 
+		let cmd=s:jsp_command
+						\.s:servlet_command
+						\.'&&javac -encoding utf8 -cp '
+						\.s:myTools_tempdir1
+						\.':'
+						\.s:myTools_tempdir2
+						\.':. '
+						\.'-Djava.ext.dirs='
+						\.s:myTools_tempdir2
+						\.' '
+						\.'-d '
+						\.s:myTools_tempdir1
+						\.' '
+						\.s:myTools_TestMethod_Source1
+						\.'/*.java'
+						\.'&& echo "编译成功,请按q键退出"'
+	else
+		let cmd=s:jsp_command
+						\.s:servlet_command
+						\.'&&mkdir -p '
+						\.s:myTools_tempdir1
+						\.' '
+						\.'&&javac -encoding utf8 -cp '
+						\.s:myTools_tempdir1
+						\.':'
+						\.s:myTools_tempdir2
+						\.':. '
+						\.'-Djava.ext.dirs='
+						\.s:myTools_tempdir2
+						\.' '
+						\.'-d '
+						\.s:myTools_tempdir1
+						\.' '
+						\.s:myTools_TestMethod_Source1
+						\.'/*.java'
+						\.'&& echo "编译成功,请按q键退出"'
+	endif
+call mytools#util#ExecCMD(cmd)
+endfunction
+"--------------------------------------自定义下-------------------------------------------------
+
+
+
+
+
+
 let s:myTools_TestMethod_Source =
             \g:myTools_Home
             \.s:Fsep
@@ -25,10 +92,7 @@ let s:myTools_TestMethod_Source =
 
 
 function! mytools#CompilePro() abort
-	echo "11111f"
-	" echo .s:myTools_tempdir.' '.s:myTools_TestMethod_Source 
-
-    " silent exec '!javac -encoding utf8 -d '.s:myTools_tempdir.' '.s:myTools_TestMethod_Source 
+    silent exec '!javac -encoding utf8 -d '.s:myTools_tempdir.' '.s:myTools_TestMethod_Source 
 endfunction
 
 if findfile(s:myTools_tempdir.join(['','com','wsdjeg','util','TestMethod.class'],s:Fsep))==""
