@@ -1,6 +1,6 @@
 let s:save_cpo = &cpo
 set cpo&vim
-if exists('g:myTools_autoloaded')
+if exists('g:myTools_util_loaded')
     finish
 endif
 let g:myTools_util_loaded = 1

@@ -2,7 +2,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 let s:name = '__myTools__'
 
-fu! myTools#win#OpenWin(cmd)
+fu! mytools#win#OpenWin(cmd)
     if bufwinnr('s:name') < 0
         if bufnr('s:name') != -1
             exe 'silent! split ' . '+b' . bufnr('s:name')
