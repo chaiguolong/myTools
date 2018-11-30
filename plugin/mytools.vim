@@ -41,6 +41,9 @@ command! -nargs=0
             \ call mytools#CompilePro1()
 
 
+command! -nargs=0
+            \ MyToolsServerCompilePro2
+            \ call mytools#CompilePro2()
 
 command! -nargs=0
             \ JUGenerateM

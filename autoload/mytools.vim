@@ -16,7 +16,20 @@ if exists("g:myTools_custom_tempdir")
 else
     let s:myTools_tempdir = g:myTools_Home .s:Fsep .'bin'
 endif
-
+"--------------------------------------自定义上-------------------------------------------------
+"功能二:部署web工程
+function! mytools#CompilePro2() abort
+	"1.将webContent目录拷贝到tomcat目录
+	let s:current_path= split(expand('%:p'),"src")[0]
+	let s:build_path=s:current_path.'build/'
+	let s:webContent_path=s:current_path.'WebContent/'
+	let s:web_info_path=s:webContent_path.'WEB-INF/'
+	let s:appname = split(s:current_path,'/')[4]
+	let s:tomcat_path = "/Users/mymac/Library/apache-tomcat-7.0.90/webapps/".s:appname."/"
+	let cmd = "cp -rf ".s:webContent_path." ".s:tomcat_path."&&cp -rf ".s:build_path." ".s:web_info_path."&&echo 部署成功"
+call mytools#util#ExecCMD(cmd)
+endfunction
+"--------------------------------------自定义下-------------------------------------------------
 
 "--------------------------------------自定义上-------------------------------------------------
 "编译java
@@ -33,47 +46,71 @@ let s:myTools_TestMethod_Source1 = fnamemodify(expand('%'), ':p:h:gs?\\?'. s:Fse
 "定义拷贝servlet.jar和jsp.jar的命令的变量
 let s:jsp_command = 'cp /Users/mymac/Library/apache-tomcat-7.0.90/lib/jsp-api.jar '.s:myTools_tempdir2
 let s:servlet_command = '&&cp /Users/mymac/Library/apache-tomcat-7.0.90/lib/servlet-api.jar '.s:myTools_tempdir2
-"将tomcat的jar包加入到classpath
-" let s:tomcat_lib = '/Users/mymac/Library/apache-tomcat-7.0.90/lib'
 	"如果目录存在运行编译脚本,如果不存在则新建文件夹build/classes
 	if isdirectory(s:myTools_tempdir1)
-		" let cmd='javac -encoding utf8 -d '.s:myTools_tempdir.' '.s:myTools_TestMethod_Source 
-		let cmd=s:jsp_command
-						\.s:servlet_command
-						\.'&&javac -encoding utf8 -cp '
-						\.s:myTools_tempdir1
-						\.':'
-						\.s:myTools_tempdir2
-						\.':. '
-						\.'-Djava.ext.dirs='
-						\.s:myTools_tempdir2
-						\.' '
-						\.'-d '
-						\.s:myTools_tempdir1
-						\.' '
-						\.s:myTools_TestMethod_Source1
-						\.'/*.java'
-						\.'&& echo "编译成功,请按q键退出"'
+		"定义文件名变量
+		let s:isJava = fnamemodify(expand('%'),':p:e')
+		"如果是java,运行编译命令,如果不是复制该文件到同级目录
+		if(s:isJava == 'java')
+			let cmd=s:jsp_command
+					\.s:servlet_command
+					\.'&&javac -encoding utf8 -cp '
+					\.s:myTools_tempdir1
+					\.':'
+					\.s:myTools_tempdir2
+					\.':. '
+					\.'-Djava.ext.dirs='
+					\.s:myTools_tempdir2
+					\.' '
+					\.'-d '
+					\.s:myTools_tempdir1
+					\.' '
+					\.s:myTools_TestMethod_Source1
+					\.'/*.java'
+					\.'&& echo "编译成功,请按q键退出"'
+		else
+			"复制该文件到相应目录下
+			"1.获得该文件的当前目录,并分割到src目录下,拼接目录
+			let s:current_path = fnamemodify(expand('%'),':p')
+			"2.获得目标目录
+			let s:target_path = split(fnamemodify(expand('%'), ':p:gs?\\?'. s:Fsep. '?'),"src")[0].'build/classes/'
+			"3.执行命令
+			let cmd='cp '.s:current_path.' '.s:target_path.' &&echo "复制成功"'
+
+		endif
 	else
-		let cmd=s:jsp_command
-						\.s:servlet_command
-						\.'&&mkdir -p '
-						\.s:myTools_tempdir1
-						\.' '
-						\.'&&javac -encoding utf8 -cp '
-						\.s:myTools_tempdir1
-						\.':'
-						\.s:myTools_tempdir2
-						\.':. '
-						\.'-Djava.ext.dirs='
-						\.s:myTools_tempdir2
-						\.' '
-						\.'-d '
-						\.s:myTools_tempdir1
-						\.' '
-						\.s:myTools_TestMethod_Source1
-						\.'/*.java'
-						\.'&& echo "编译成功,请按q键退出"'
+		"定义文件名变量
+		let s:isJava = fnamemodify(expand('%'),':p:e')
+		"如果是java,运行编译命令,如果不是复制该文件到同级目录
+		if(s:isJava == 'java')
+			let cmd=s:jsp_command
+					\.s:servlet_command
+					\.'&&mkdir -p '
+					\.s:myTools_tempdir1
+					\.' '
+					\.'&&javac -encoding utf8 -cp '
+					\.s:myTools_tempdir1
+					\.':'
+					\.s:myTools_tempdir2
+					\.':. '
+					\.'-Djava.ext.dirs='
+					\.s:myTools_tempdir2
+					\.' '
+					\.'-d '
+					\.s:myTools_tempdir1
+					\.' '
+					\.s:myTools_TestMethod_Source1
+					\.'/*.java'
+					\.'&& echo "编译成功,请按q键退出"'
+		else
+			"复制该文件到相应目录下
+			"1.获得该文件的当前目录,并分割到src目录下,拼接目录
+			let s:current_path = fnamemodify(expand('%'),':p')
+			"2.获得目标目录
+			let s:target_path = split(fnamemodify(expand('%'), ':p:gs?\\?'. s:Fsep. '?'),"src")[0].'build/classes/'
+			"3.执行命令
+			let cmd='cp '.s:current_path.' '.s:target_path.' &&echo "复制成功"'
+		endif
 	endif
 call mytools#util#ExecCMD(cmd)
 endfunction
